@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+{% block title %}Order List{% endblock %}
+
+{% block content %}
+<section class="content-header">
+  <div class="container-fluid">
+    <h1>Order List</h1>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <button id="addOrderBtn" class="btn btn-success">
+            <i class="fas fa-plus mr-1"></i> Add Order
+          </button>
+          <button id="bulkDeleteBtn" class="btn btn-danger">
+            <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <table id="orderTable" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll"></th>
+              <th>ID</th>
+              <th>Customer Name</th>
+              <th>Date</th>
+              <th>Order Items</th>
+              <th>Order Status</th>
+              <th>Payment Status</th>
+              <th>Total Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr>
+              <td><input type="checkbox" class="selectBox" value="{{ order.id }}"></td>
+              <td>{{ order.id }}</td>
+              <td>{{ order.customer_name }}</td>
+              <td>{{ order.order_date }}</td>
+              <td>{% for item in order.order_items %}
+                  <div style="margin-bottom: 8px;">
+                    <strong>Product ID:</strong> {{ item.product_id }}<br>
+                    <strong>Product Name:</strong> {{ item.product_name }}<br>
+                    <strong>Quantity:</strong> {{ item.quantity }}<br>
+                    <strong>Unit Price:</strong> ₹{{ item.unit_price }}
+                  </div>
+                  {% if not loop.last %}
+                    <hr class="my-1">
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td><span class="badge bg-info">{{ order.order_status }}</span></td>
+              <td><span class="badge bg-info">{{ order.payment_status }}</span></td>
+              <td>{{ order.total_amount}}</td>
+              <td>
+                <button class="btn btn-sm btn-primary editOrderBtn" data-id="{{ order.id }}">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ order.id }}">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Order Modal -->
+{% include "order/order_modal_form.html" %}
+{% endblock %}
+
+{% block scripts %}
+<!-- DataTables & dependencies -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+<!-- FontAwesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<!-- Bootstrap 5 Modal dependencies (if not included already) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script src="{{ url_for('static', path='js/order.js') }}"></script>
+
+<script>
+  $(document).ready(function () {
+    const table = $('#orderTable').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'copy',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6, 7] 
+          }
+        },
+        {
+          extend: 'csv',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6, 7]
+          }
+        },
+        {
+          extend: 'excel',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6, 7]
+          }
+        },
+        {
+          extend: 'print',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6, 7]
+          }
+        }
+      ],
+      columnDefs: [
+        { orderable: false, targets: [0, 8] }
+      ]
+    });
+
+    // Select all checkbox
+    $('#selectAll').on('click', function () {
+      const checked = this.checked;
+      $('.selectBox').each(function () {
+        this.checked = checked;
+      });
+    });
+  });
+</script>
+{% endblock %}

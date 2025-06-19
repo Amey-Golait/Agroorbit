@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block title %}Customer List{% endblock %}
+
+{% block content %}
+<section class="content-header">
+  <div class="container-fluid">
+    <h1>Customer List</h1>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <button id="addCustomerBtn" class="btn btn-success">
+            <i class="fas fa-plus mr-1"></i> Add Customer
+          </button>
+          <button id="bulkDeleteBtn" class="btn btn-danger">
+            <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <table id="customerTable" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll"></th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Firm Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>User Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in customers %}
+            <tr>
+              <td><input type="checkbox" class="selectBox" value="{{ c.id }}"></td>
+              <td>{{ c.id }}</td>
+              <td>{{ c.name }}</td>
+              <td>{{ c.firm_name }}</td>
+              <td>{{ c.phone }}</td>
+              <td>{{ c.email }}</td>
+              <td><span class="badge bg-info">{{ c.user_type }}</span></td>
+              <td>
+                <button class="btn btn-sm btn-primary editCustomerBtn" data-id="{{ c.id }}" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ c.id }}" title="Delete">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %} 
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Customer Add/Edit Modal -->
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form id="customerForm" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="customerModalLabel">Add Customer</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="customer_id" name="customer_id" value="">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" class="form-control" id="name" required>
+              </div>
+              <div class="form-group">
+                <label for="firm_name">Firm Name</label>
+                <input type="text" name="firm_name" class="form-control" id="firm_name">
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" name="phone" class="form-control" id="phone">
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" class="form-control" id="email">
+              </div>
+              <div class="form-group">
+                <label for="pan_no">PAN No</label>
+                <input type="text" name="pan_no" class="form-control" id="pan_no">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="user_type">User Type</label>
+                <input type="text" name="user_type" class="form-control" id="user_type">
+              </div>
+              <div class="form-group">
+                <label for="address">Address</label>
+                <textarea name="address" class="form-control" id="address"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="licence_no">Licence No</label>
+                <input type="number" name="licence_no" class="form-control" id="licence_no">
+              </div>
+              <div class="form-group">
+                <label for="licence_expiry_date">Licence Expiry Date</label>
+                <input type="date" name="licence_expiry_date" class="form-control" id="licence_expiry_date">
+              </div>
+              <div class="form-group">
+                <label for="password">Password <small>(Leave blank to keep unchanged on edit)</small></label>
+                <input type="password" name="password" class="form-control" id="password">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- DataTables & dependencies -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+<!-- FontAwesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<!-- Bootstrap 5 Modal dependencies (if not included already) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script src="{{ url_for('static', path='js/customer.js') }}"></script>
+
+<script>
+  $(document).ready(function () {
+    const table = $('#customerTable').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'copy',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6] 
+          }
+        },
+        {
+          extend: 'csv',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6]
+          }
+        },
+        {
+          extend: 'excel',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6]
+          }
+        },
+        {
+          extend: 'print',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6]
+          }
+        }
+      ],
+      columnDefs: [
+        { orderable: false, targets: [0, 7] }
+      ]
+    });
+
+    // Select all checkbox
+    $('#selectAll').on('click', function () {
+      const checked = this.checked;
+      $('.selectBox').each(function () {
+        this.checked = checked;
+      });
+    });
+  });
+</script>
+{% endblock %}

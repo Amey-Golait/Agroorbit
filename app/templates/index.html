@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Dashboard</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{ customer_count }}</h3>
+            <p>Customers</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <a href="/customers/ui" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>{{ staff_count }}</h3>
+            <p>Staff</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-user-tie"></i>
+          </div>
+          <a href="/staff/ui" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{ product_count }}</h3>
+            <p>Products</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-boxes"></i>
+          </div>
+          <a href="/products/ui" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+       <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{ order_count }}</h3>
+            <p>Orders</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <a href="/orders/ui" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+    </div>
+    <!-- /.row -->
+
+    <!-- Optional Welcome Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Welcome</h3>
+      </div>
+      <div class="card-body">
+        Welcome to the Admin Panel. Use the sidebar to manage Customers, Staff, Products, and Orders.
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
