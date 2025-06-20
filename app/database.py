@@ -5,8 +5,8 @@ from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL is None:
-    raise ValueError("DATABASE_URL is not set. Please configure it in Railway environment variables.")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set. Check Railway environment variables.")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
