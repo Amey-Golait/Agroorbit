@@ -1,5 +1,4 @@
 import os
-import uvicorn
 from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -15,6 +14,7 @@ from app.models.staff import Staff
 
 app = FastAPI()
 
+# CORS setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,18 +23,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-
-# Mount static directory
+# Template and static file configuration
+templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-# Set upload directory based on environment
+# Upload directory configuration
 IS_RENDER = os.environ.get("RENDER") == "true"
 if IS_RENDER:
     UPLOAD_DIR = "/mnt/data/uploads"
 else:
-    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+    UPLOAD_DIR = os.path.join("app", "uploads")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
@@ -46,13 +44,14 @@ app.include_router(product.router)
 app.include_router(orders.router)
 app.include_router(staff.router)
 
+# Root route with dashboard rendering
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request, db: Session = Depends(get_db)):
     total_customers = db.query(Customer).count()
     total_orders = db.query(Order).count()
     total_products = db.query(Product).count()
     total_staff = db.query(Staff).count()
-    
+
     return templates.TemplateResponse("index.html", {
         "request": request,
         "customer_count": total_customers,
@@ -60,6 +59,3 @@ def index(request: Request, db: Session = Depends(get_db)):
         "product_count": total_products,
         "staff_count": total_staff,
     })
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
