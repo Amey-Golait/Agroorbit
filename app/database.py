@@ -6,11 +6,11 @@ from sqlalchemy.orm import sessionmaker
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL is not set.")
+MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
+if not MYSQL_DATABASE:
+    raise RuntimeError("MYSQL_DATABASE is not set.")
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(MYSQL_DATABASE)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
