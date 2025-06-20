@@ -46,12 +46,12 @@ app.include_router(staff.router)
 
 # Root route with dashboard rendering
 @app.get("/", response_class=HTMLResponse)
-def index(request: Request, db: Session = Depends(get_db)):
+async def index(request: Request, db: Session = Depends(get_db)):
     total_customers = db.query(Customer).count()
     total_orders = db.query(Order).count()
     total_products = db.query(Product).count()
     total_staff = db.query(Staff).count()
-
+    
     return templates.TemplateResponse("index.html", {
         "request": request,
         "customer_count": total_customers,
